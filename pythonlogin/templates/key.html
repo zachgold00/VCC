@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<h2>API Key Page</h2>
+<p>Welcome back, {{ username }}!</p>
+<p>Your API key is:</p>
+<p>{{ generated_key }}</p>
+
+<form action=/login/key/keyapi>
+  <label for="fapi">Insert API Key here:</label><br>
+  <input type="text" id="fapi" name="fapi"><br>
+  <input type="submit" value="Click here to get the average rate at which the blockchain height is increasing in [blocks per min]!"/>
+</form>
+
+
+
+
+
+
+
+{% endblock %}

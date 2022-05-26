@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h2>Home Page</h2>
+<p>Welcome back, {{ username }}!</p>
+<p>Your id is, {{ id }}!</p>
+
+<form action=/login/key>
+    <input type="submit" value="Click here to get key!" />
+</form>
+
+
+
+{% endblock %}
