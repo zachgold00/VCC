@@ -43,6 +43,7 @@ def callapi():
 
     return json.dumps(json_data, indent=4);
 
+
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=callapi, trigger="interval", seconds=60)
 scheduler.start()
@@ -183,16 +184,8 @@ def postapiheaders():
 
         if generated_key in query_string:
 
-            # beaconurl = "http://3.70.154.20:3500/eth/v1alpha1/beacon/chainhead"
-
             with open('/Users/zacharygoldstein/PycharmProjects/VCC7.0/personal.json', 'r') as f:
                 data = json.load(f)
-
-
-            # headers = CaseInsensitiveDict()
-            # headers["Accept"] = "application/json"
-
-            # resp = requests.get(beaconurl, headers=headers)
 
             return render_template('keyapi.html', username=session['username'], response=callapi());
         else:
