@@ -5,6 +5,11 @@ import re
 import requests
 from requests.structures import CaseInsensitiveDict
 from key_generator.key_generator import generate
+import json
+import time
+import atexit
+
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__, template_folder='/Users/zacharygoldstein/PycharmProjects/VCC7.0/pythonlogin/templates')
 
@@ -25,6 +30,25 @@ mysql = MySQL(app)
 
 key1 = generate(seed=101)
 generated_key = key1.get_key()
+
+
+def callapi():
+    # there is inbuilt json() constructor for requests.get() method
+    json_data = requests.get("http://3.70.154.20:3500/eth/v1alpha1/beacon/chainhead").json()
+    # print(json.dumps(json_data, indent=4))
+
+    # To actually write the data to the file, we just call the dump() function from json library
+    with open('personal.json', 'w') as json_file:
+        json.dump(json_data, json_file)
+
+    return json.dumps(json_data, indent=4);
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=callapi, trigger="interval", seconds=60)
+scheduler.start()
+
+# Shut down the scheduler when exiting the app
+atexit.register(lambda: scheduler.shutdown())
 
 
 @app.route('/')
@@ -153,20 +177,24 @@ def postapiheaders():
 
         query_string = query_string.decode()
 
-        #code = query_string.split('fapi?')[0]
+        # code = query_string.split('fapi?')[0]
 
-        #print(query_string)
+        # print(query_string)
 
         if generated_key in query_string:
 
-            beaconurl = "http://3.70.154.20:3500/eth/v1alpha1/beacon/chainhead"
+            # beaconurl = "http://3.70.154.20:3500/eth/v1alpha1/beacon/chainhead"
 
-            headers = CaseInsensitiveDict()
-            headers["Accept"] = "application/json"
-
-            resp = requests.get(beaconurl, headers=headers)
+            with open('/Users/zacharygoldstein/PycharmProjects/VCC7.0/personal.json', 'r') as f:
+                data = json.load(f)
 
 
-            return render_template('keyapi.html', username=session['username'], response=resp.json());
+            # headers = CaseInsensitiveDict()
+            # headers["Accept"] = "application/json"
+
+            # resp = requests.get(beaconurl, headers=headers)
+
+            return render_template('keyapi.html', username=session['username'], response=callapi());
         else:
-            return render_template('keyapi.html', username=session['username'], response='Wrong API Key, please try again!');
+            return render_template('keyapi.html', username=session['username'],
+                                   response='Wrong API Key, please try again!');
