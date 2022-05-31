@@ -186,8 +186,16 @@ def postapiheaders():
 
             with open('/Users/zacharygoldstein/PycharmProjects/VCC7.0/personal.json', 'r') as f:
                 data = json.load(f)
+                hs = float(data['headSlot'])
+                pje = float(data['previousJustifiedEpoch'])
 
-            return render_template('keyapi.html', username=session['username'], response=callapi());
+                rateofheight = pje/hs * 100
+
+                rateofheight = str(round(rateofheight, 2))
+
+
+
+            return render_template('keyapi.html', username=session['username'], rateofheight=rateofheight, response=callapi());
         else:
             return render_template('keyapi.html', username=session['username'],
                                    response='Wrong API Key, please try again!');
